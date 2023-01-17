@@ -18,5 +18,9 @@ test("Check win by high card", () => {
         { cardValue: 14, cardKind: "H" },
       ],
     })
-  ).toEqual("");
+  ).toEqual({
+    winner: "White wins.",
+    winningType: " - with high card: ",
+    winningCard: ` highest card: 14H`,
+  });
 });

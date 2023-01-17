@@ -380,13 +380,13 @@ function gameResult(inputCards: InputCards): ReturnType {
   if (blackTop > whiteTop) {
     return {
       winner: "Black wins.",
-      winningType: " - with straight flush",
+      winningType: " - with high card: ",
       winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
     };
   } else {
     return {
       winner: "White wins.",
-      winningType: " - with straight flush",
+      winningType: " - with high card: ",
       winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
     };
   }
