@@ -27,17 +27,17 @@ type InputCards = {
   Black: Card[];
   White: Card[];
 };
-type Winner = "White wins." | "Black wins." | "Tie.";
+type Winner = "White" | "Black" | "Tie";
 type WinningType =
-  | " - with high card: "
-  | " - with pair: "
-  | " - with two pairs: "
-  | " - with three of a kind: "
-  | " - with straight: "
-  | " - with flush: "
-  | " - with full house: "
-  | " - with four of a kind: "
-  | " - with straight flush";
+  | "high card"
+  | "pair"
+  | "two pairs"
+  | "three of a kind"
+  | "straight"
+  | "flush"
+  | "full house"
+  | "four of a kind"
+  | "straight flush";
 type WinningCard = string;
 export type ReturnType =
   | {
@@ -48,7 +48,9 @@ export type ReturnType =
   | { winner: Winner };
 
 //------------------------------------------------checks top card in hands
-function highestCard(hands: InputCards): (string | Card)[] {
+function highestCardInHands(
+  hands: InputCards
+): ("White" | "Black" | "Both" | Card)[] {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;
@@ -68,8 +70,43 @@ function highestCard(hands: InputCards): (string | Card)[] {
   let topCardWhite: Card = whiteHand[indexOfLargestCard];
   if (topCardBlack > topCardWhite) {
     return ["Black", topCardBlack];
-  } else {
+  } else if (topCardBlack < topCardWhite) {
     return ["White", topCardWhite];
+  } else {
+    return ["Both", topCardWhite];
+  }
+}
+//------------------------------------------------return value of card from multiples
+function cardOfMultiples(
+  objs: object[],
+  num: number
+): ("Black" | "White" | "Both" | number)[] {
+  let bestCardBlack: CardValue | string = "";
+  let bestCardWhite: CardValue | string = "";
+  const objBlack = objs[0];
+  const objWhite = objs[1];
+
+  Object.entries(objBlack).find(([key, value]) => {
+    if (value === num) {
+      bestCardBlack = key;
+      return true;
+    }
+    return false;
+  });
+  Object.entries(objWhite).find(([key, value]) => {
+    if (value === num) {
+      bestCardWhite = key;
+      return true;
+    }
+    return false;
+  });
+
+  if (bestCardBlack > bestCardWhite) {
+    return ["Black", Number(bestCardBlack)];
+  } else if (bestCardBlack < bestCardWhite) {
+    return ["White", Number(bestCardWhite)];
+  } else {
+    return ["Both", Number(bestCardWhite)];
   }
 }
 //------------------------------------------------checks how many of same in hands
@@ -78,6 +115,7 @@ function numOfSame(hands: InputCards): 0 | object[] {
   const whiteHand = hands.White;
   const pairObjBlack: any = {};
   const pairObjWhite: any = {};
+
   for (let card of blackHand) {
     if (pairObjBlack[card.cardValue] === undefined) {
       pairObjBlack[card.cardValue] = 1;
@@ -103,7 +141,9 @@ function numOfSame(hands: InputCards): 0 | object[] {
   }
 }
 //------------------------------------------------checks four of a kind in hands
-function isFourOfAKind(handObjs: object[]): "Both" | "White" | "Black" | 0 {
+function isFourOfAKind(
+  handObjs: object[]
+): "White" | "Black" | 0 | (number | "Both" | "White" | "Black")[] {
   const handObjBlack = handObjs[0];
   const handObjWhite = handObjs[1];
   const result: ("White" | "Black")[] = [];
@@ -120,7 +160,8 @@ function isFourOfAKind(handObjs: object[]): "Both" | "White" | "Black" | 0 {
     result.push("White");
   }
   if (result.length === 2) {
-    return "Both";
+    const winner = cardOfMultiples(handObjs, 4);
+    return winner;
   } else if (result.length === 1) {
     return result[0];
   } else {
@@ -128,7 +169,9 @@ function isFourOfAKind(handObjs: object[]): "Both" | "White" | "Black" | 0 {
   }
 }
 //------------------------------------------------checks three of a kind in hands
-function isThreeOfAKind(handObjs: object[]): "Both" | "White" | "Black" | 0 {
+function isThreeOfAKind(
+  handObjs: object[]
+): "Both" | "White" | "Black" | 0 | (number | "Both" | "White" | "Black")[] {
   const handObjBlack = handObjs[0];
   const handObjWhite = handObjs[1];
   const result: ("White" | "Black")[] = [];
@@ -145,7 +188,8 @@ function isThreeOfAKind(handObjs: object[]): "Both" | "White" | "Black" | 0 {
     result.push("White");
   }
   if (result.length === 2) {
-    return "Both";
+    const winner = cardOfMultiples(handObjs, 3);
+    return winner;
   } else if (result.length === 1) {
     return result[0];
   } else {
@@ -188,13 +232,16 @@ function numPairs(
   }
 }
 //------------------------------------------------checks if cards are a full house
-function isFullHouse(hands: InputCards): "Both" | "Black" | "White" | 0 {
+function isFullHouse(
+  hands: InputCards
+): "Both" | "Black" | "White" | 0 | (number | "Both" | "White" | "Black")[] {
   const handObjs = numOfSame(hands);
   if (handObjs === 0) {
     return 0;
   } else {
     if (isThreeOfAKind(handObjs) === "Both" && numPairs(handObjs) === "Both1") {
-      return "Both";
+      const winner = cardOfMultiples(handObjs, 3);
+      return winner;
     } else if (
       isThreeOfAKind(handObjs) === "Both" &&
       numPairs(handObjs) === "Black1"
@@ -231,7 +278,9 @@ function isFullHouse(hands: InputCards): "Both" | "Black" | "White" | 0 {
   }
 }
 //------------------------------------------------checks if cards are in a row
-function isInARow(hands: InputCards): "White" | "Black" | "Both" | 0 {
+function isInARow(
+  hands: InputCards
+): "White" | "Black" | "Both" | 0 | ("White" | "Black" | "Both" | Card)[] {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;
@@ -273,11 +322,14 @@ function isInARow(hands: InputCards): "White" | "Black" | "Both" | 0 {
   } else if (result.length === 1) {
     return result[0];
   } else {
-    return "Both";
+    const winner = highestCardInHands(hands);
+    return winner;
   }
 }
-//------------------------------------------------checks if cards are one suite
-function isOneSuite(hands: InputCards): "White" | "Black" | "Both" | 0 {
+//------------------------------------------------checks if cards are one suite9
+function isOneSuite(
+  hands: InputCards
+): "White" | "Black" | "Both" | 0 | ("White" | "Black" | "Both" | Card)[] {
   let handOfCardsBlack: number = 0;
   let handOfCardsWhite: number = 0;
   const blackHand = hands.Black;
@@ -295,7 +347,8 @@ function isOneSuite(hands: InputCards): "White" | "Black" | "Both" | 0 {
     trueCases.includes(handOfCardsBlack) &&
     trueCases.includes(handOfCardsWhite)
   ) {
-    return "Both";
+    const winner = highestCardInHands(hands);
+    return winner;
   } else if (
     trueCases.includes(handOfCardsBlack) &&
     !trueCases.includes(handOfCardsWhite)
@@ -311,13 +364,16 @@ function isOneSuite(hands: InputCards): "White" | "Black" | "Both" | 0 {
   }
 }
 //------------------------------------------------checks if cards are straight flush
-function isStraightFlush(hands: InputCards): any {
+function isStraightFlush(
+  hands: InputCards
+): "White" | "Black" | 0 | ("White" | "Black" | "Both" | Card)[] {
   if (isInARow(hands) === "Black" && isOneSuite(hands) === "Black") {
     return "Black";
   } else if (isInARow(hands) === "White" && isOneSuite(hands) === "White") {
     return "White";
   } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "Both") {
-    return "Both";
+    const winner = highestCardInHands(hands);
+    return winner;
   } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "White") {
     return "White";
   } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "Black") {
@@ -330,263 +386,293 @@ function isStraightFlush(hands: InputCards): any {
     return 0;
   }
 }
+//------------------------------------------------checks if cards are royal flush
+// todo^^^^^
 
-//------------------------------------------------game result
-// export to other function, who won in each function: White | Black | Both
-// if both check topCard
+//=======================GAME RESULT==================================
+//------------------------------------------------game result function
 function gameResult(inputCards: InputCards): ReturnType {
-  const blackTop = highestCard(inputCards.Black);
-  const whiteTop = highestCard(inputCards.White);
+  // royal flush
+  // straight flush
+  const straightFlushResult = isStraightFlush(inputCards);
+  if (straightFlushResult !== 0) {
+    console.log(399);
+    if (straightFlushResult === "Black") {
+      return { winner: "Black", winningType: "straight flush" };
+    } else if (straightFlushResult === "White") {
+      return { winner: "White", winningType: "straight flush" };
+    } else if (Array.isArray(straightFlushResult)) {
+      if (straightFlushResult[0] === "Black") {
+        return {
+          winner: "Black",
+          winningType: "straight flush",
+          winningCard: `${straightFlushResult[1]}`,
+        };
+      } else if (straightFlushResult[0] === "White") {
+        return {
+          winner: "White",
+          winningType: "straight flush",
+          winningCard: `${straightFlushResult[1]}`,
+        };
+      } else {
+        return { winner: "Tie" };
+      }
+    }
+  }
 
-  if (isStraightFlush(inputCards.Black) || isStraightFlush(inputCards.White)) {
-    console.log(163);
-    if (
-      isStraightFlush(inputCards.Black) &&
-      !isStraightFlush(inputCards.White)
-    ) {
-      return { winner: "Black wins.", winningType: " - with straight flush" };
-    } else if (
-      isStraightFlush(inputCards.White) &&
-      !isStraightFlush(inputCards.Black)
-    ) {
-      return { winner: "White wins.", winningType: " - with straight flush" };
+  const numOfSameObjs = numOfSame(inputCards);
+  const highestCardResult = highestCardInHands(inputCards);
+  // four of a kind ----> full house
+  if (numOfSameObjs !== 0) {
+    console.log(427);
+    const fourOfAKindResult = isFourOfAKind(numOfSameObjs);
+    const fullHouseResult = isFullHouse(inputCards);
+    // four of a kind
+    if (fourOfAKindResult !== 0) {
+      if (fourOfAKindResult === "Black") {
+        return { winner: "Black", winningType: "four of a kind" };
+      } else if (fourOfAKindResult === "White") {
+        return { winner: "White", winningType: "four of a kind" };
+      } else if (Array.isArray(fourOfAKindResult)) {
+        if (fourOfAKindResult[0] === "Black") {
+          return {
+            winner: "Black",
+            winningType: "four of a kind",
+            winningCard: `${fourOfAKindResult[1]}`,
+          };
+        } else if (fourOfAKindResult[0] === "White") {
+          return {
+            winner: "White",
+            winningType: "four of a kind",
+            winningCard: `${fourOfAKindResult[1]}`,
+          };
+        } else {
+          return {
+            winner: "Tie",
+          };
+        }
+      }
+    } else if (fullHouseResult) {
+      // START HERE^^^ full house
+    }
+  } /* high card */ else {
+    if (highestCardResult[0] === "Black") {
+      return { winner: "Black", winningType: "high card" };
+    } else if (highestCardResult[0] === "White") {
+      return { winner: "White", winningType: "high card" };
     } else {
-      if (blackTop > whiteTop) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with straight flush",
-          winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
-        };
-      } else {
-        return {
-          winner: "White wins.",
-          winningType: " - with straight flush",
-          winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
-        };
-      }
+      return { winner: "Tie" };
     }
   }
+  // four of a kind ---> full house
+  // const inputWhiteObj = numOfSame(inputCards);
+  // const inputBlackObj = numOfSame(inputCards);
+  // if (inputWhiteObj !== 0 || inputBlackObj !== 0) {
+  //   if (inputBlackObj !== 0 && isFourOfAKind(inputBlackObj)) {
+  //     console.log(196);
+  //     if (
+  //       isFourOfAKind(inputBlackObj) &&
+  //       inputWhiteObj !== 0 &&
+  //       !isFourOfAKind(inputWhiteObj)
+  //     ) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "four of a kind: ",
+  //       };
+  //     } else if (
+  //       inputWhiteObj !== 0 &&
+  //       isFourOfAKind(inputWhiteObj) &&
+  //       !isFourOfAKind(inputBlackObj)
+  //     ) {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "four of a kind: ",
+  //       };
+  //     } else {
+  //       if (blackTop > whiteTop) {
+  //         return {
+  //           winner: "Black",winningType: "straight flush",
+  //           winningType: "four of a kind: ",
+  //           winningCard: ` 4 card: `,
+  //         };
+  //       } else {
+  //         return {
+  //           winner: "White",winningType: "straight flush",
+  //           winningType: "four of a kind: ",
+  //           winningCard: ` 4 card: `,
+  //         };
+  //       }
+  //     }
+  //   } else if (isFullHouse(inputCards.Black) || isFullHouse(inputCards.White)) {
+  //     console.log(226);
+  //     if (isFullHouse(inputCards.Black) && !isFullHouse(inputCards.White)) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "full house: ",
+  //       };
+  //     } else if (
+  //       isFullHouse(inputCards.White) &&
+  //       !isFullHouse(inputCards.Black)
+  //     ) {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "full house: ",
+  //       };
+  //     } else {
+  //       if (blackTop > whiteTop) {
+  //         return {
+  //           winner: "Black",winningType: "straight flush",
+  //           winningType: "full house: ",
+  //           winningCard: ` 3 card: `,
+  //         };
+  //       } else {
+  //         return {
+  //           winner: "White",winningType: "straight flush",
+  //           winningType: "full house: ",
+  //           winningCard: ` 3 card: `,
+  //         };
+  //       }
+  //     }
+  //   }
+  // }
+  // // flush
+  // if (isOneSuite(inputCards.Black) || isOneSuite(inputCards.White)) {
+  //   console.log(259);
+  //     if (blackTop > whiteTop) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "flush: ",
+  //         winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
+  //       };
+  //     } else {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "flush: ",
+  //         winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
+  //       };
+  //     }
+  //   }
+  // // straight
+  // if (isInARow(inputCards.Black) || isInARow(inputCards.White)) {
+  //   console.log(282);
+  //     if (blackTop > whiteTop) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "straight: ",
+  //         winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
+  //       };
+  //     } else {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "straight: ",
+  //         winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
+  //       };
+  //     }
+  //   }
+  // // three of a kind ---> two pairs ---> one pair
+  // if (inputWhiteObj !== 0 || inputBlackObj !== 0) {
+  //   if (isThreeOfAKind(inputBlackObj) || isThreeOfAKind(inputWhiteObj)) {
+  //     console.log(306);
+  //     if (isThreeOfAKind(inputBlackObj) && !isThreeOfAKind(inputWhiteObj)) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "three of a kind: ",
+  //       };
+  //     } else if (
+  //       isThreeOfAKind(inputWhiteObj) &&
+  //       !isThreeOfAKind(inputBlackObj)
+  //     ) {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "three of a kind: ",
+  //       };
+  //     } else {
+  //       if (blackTop > whiteTop) {
+  //         return {
+  //           winner: "Black",winningType: "straight flush",
+  //           winningType: "three of a kind: ",
+  //           winningCard: ` card: `,
+  //         };
+  //       } else {
+  //         return {
+  //           winner: "White",winningType: "straight flush",
+  //           winningType: "three of a kind: ",
+  //           winningCard: ` card: `,
+  //         };
+  //       }
+  //     }
+  //   } else if (numPairs(inputBlackObj) > 1 || numPairs(inputWhiteObj) > 1) {
+  //     console.log(336);
+  //     if (numPairs(inputBlackObj) > 1 && numPairs(inputWhiteObj) < 2) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "two pairs: ",
+  //       };
+  //     } else if (numPairs(inputWhiteObj) > 1 && numPairs(inputBlackObj) < 2) {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "two pairs: ",
+  //       };
+  //     } else {
+  //       if (blackTop > whiteTop) {
+  //         return {
+  //           winner: "Black",winningType: "straight flush",
+  //           winningType: "two pairs: ",
+  //           winningCard: ` highest pair: `,
+  //         };
+  //       } else {
+  //         return {
+  //           winner: "White",winningType: "straight flush",
+  //           winningType: "two pairs: ",
+  //           winningCard: ` highest pair: `,
+  //         };
+  //       }
+  //     }
+  //   } else if (numPairs(inputBlackObj) > 1 || numPairs(inputWhiteObj) > 1) {
+  //     console.log(363);
+  //     if (numPairs(inputBlackObj) > 1 && numPairs(inputWhiteObj) < 1) {
+  //       return {
+  //         winner: "Black",winningType: "straight flush",
+  //         winningType: "pair: ",
+  //       };
+  //     } else if (numPairs(inputWhiteObj) > 1 && numPairs(inputBlackObj) < 1) {
+  //       return {
+  //         winner: "White",winningType: "straight flush",
+  //         winningType: "pair: ",
+  //       };
+  //     } else {
+  //       if (blackTop > whiteTop) {
+  //         return {
+  //           winner: "Black",winningType: "straight flush",
+  //           winningType: "pair: ",
+  //           winningCard: ` highest pair: `,
+  //         };
+  //       } else {
+  //         return {
+  //           winner: "White",winningType: "straight flush",
+  //           winningType: "pair: ",
+  //           winningCard: ` highest pair: `,
+  //         };
+  //       }
+  //     }
+  //   }
+  // }
 
-  const inputWhiteObj = numOfSame(inputCards.White);
-  const inputBlackObj = numOfSame(inputCards.Black);
-  if (inputWhiteObj !== 0 || inputBlackObj !== 0) {
-    if (inputBlackObj !== 0 && isFourOfAKind(inputBlackObj)) {
-      console.log(196);
-      if (
-        isFourOfAKind(inputBlackObj) &&
-        inputWhiteObj !== 0 &&
-        !isFourOfAKind(inputWhiteObj)
-      ) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with four of a kind: ",
-        };
-      } else if (
-        inputWhiteObj !== 0 &&
-        isFourOfAKind(inputWhiteObj) &&
-        !isFourOfAKind(inputBlackObj)
-      ) {
-        return {
-          winner: "White wins.",
-          winningType: " - with four of a kind: ",
-        };
-      } else {
-        if (blackTop > whiteTop) {
-          return {
-            winner: "Black wins.",
-            winningType: " - with four of a kind: ",
-            winningCard: ` 4 card: `,
-          };
-        } else {
-          return {
-            winner: "White wins.",
-            winningType: " - with four of a kind: ",
-            winningCard: ` 4 card: `,
-          };
-        }
-      }
-    } else if (isFullHouse(inputCards.Black) || isFullHouse(inputCards.White)) {
-      console.log(226);
-      if (isFullHouse(inputCards.Black) && !isFullHouse(inputCards.White)) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with full house: ",
-        };
-      } else if (
-        isFullHouse(inputCards.White) &&
-        !isFullHouse(inputCards.Black)
-      ) {
-        return {
-          winner: "White wins.",
-          winningType: " - with full house: ",
-        };
-      } else {
-        if (blackTop > whiteTop) {
-          return {
-            winner: "Black wins.",
-            winningType: " - with full house: ",
-            winningCard: ` 3 card: `,
-          };
-        } else {
-          return {
-            winner: "White wins.",
-            winningType: " - with full house: ",
-            winningCard: ` 3 card: `,
-          };
-        }
-      }
-    }
-  }
-
-  if (isOneSuite(inputCards.Black) || isOneSuite(inputCards.White)) {
-    console.log(259);
-    if (isOneSuite(inputCards.Black) && !isOneSuite(inputCards.White)) {
-      return { winner: "Black wins.", winningType: " - with flush: " };
-    } else if (isOneSuite(inputCards.White) && !isOneSuite(inputCards.Black)) {
-      return { winner: "White wins.", winningType: " - with flush: " };
-    } else {
-      if (blackTop > whiteTop) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with flush: ",
-          winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
-        };
-      } else {
-        return {
-          winner: "White wins.",
-          winningType: " - with flush: ",
-          winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
-        };
-      }
-    }
-  }
-
-  if (isInARow(inputCards.Black) || isInARow(inputCards.White)) {
-    console.log(282);
-    if (isInARow(inputCards.Black) && !isInARow(inputCards.White)) {
-      return { winner: "Black wins.", winningType: " - with straight: " };
-    } else if (isInARow(inputCards.White) && !isInARow(inputCards.Black)) {
-      return { winner: "White wins.", winningType: " - with straight: " };
-    } else {
-      if (blackTop > whiteTop) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with straight: ",
-          winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
-        };
-      } else {
-        return {
-          winner: "White wins.",
-          winningType: " - with straight: ",
-          winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
-        };
-      }
-    }
-  }
-
-  if (inputWhiteObj !== 0 || inputBlackObj !== 0) {
-    if (isThreeOfAKind(inputBlackObj) || isThreeOfAKind(inputWhiteObj)) {
-      console.log(306);
-      if (isThreeOfAKind(inputBlackObj) && !isThreeOfAKind(inputWhiteObj)) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with three of a kind: ",
-        };
-      } else if (
-        isThreeOfAKind(inputWhiteObj) &&
-        !isThreeOfAKind(inputBlackObj)
-      ) {
-        return {
-          winner: "White wins.",
-          winningType: " - with three of a kind: ",
-        };
-      } else {
-        if (blackTop > whiteTop) {
-          return {
-            winner: "Black wins.",
-            winningType: " - with three of a kind: ",
-            winningCard: ` card: `,
-          };
-        } else {
-          return {
-            winner: "White wins.",
-            winningType: " - with three of a kind: ",
-            winningCard: ` card: `,
-          };
-        }
-      }
-    } else if (numPairs(inputBlackObj) > 1 || numPairs(inputWhiteObj) > 1) {
-      console.log(336);
-      if (numPairs(inputBlackObj) > 1 && numPairs(inputWhiteObj) < 2) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with two pairs: ",
-        };
-      } else if (numPairs(inputWhiteObj) > 1 && numPairs(inputBlackObj) < 2) {
-        return {
-          winner: "White wins.",
-          winningType: " - with two pairs: ",
-        };
-      } else {
-        if (blackTop > whiteTop) {
-          return {
-            winner: "Black wins.",
-            winningType: " - with two pairs: ",
-            winningCard: ` highest pair: `,
-          };
-        } else {
-          return {
-            winner: "White wins.",
-            winningType: " - with two pairs: ",
-            winningCard: ` highest pair: `,
-          };
-        }
-      }
-    } else if (numPairs(inputBlackObj) > 1 || numPairs(inputWhiteObj) > 1) {
-      console.log(363);
-      if (numPairs(inputBlackObj) > 1 && numPairs(inputWhiteObj) < 1) {
-        return {
-          winner: "Black wins.",
-          winningType: " - with pair: ",
-        };
-      } else if (numPairs(inputWhiteObj) > 1 && numPairs(inputBlackObj) < 1) {
-        return {
-          winner: "White wins.",
-          winningType: " - with pair: ",
-        };
-      } else {
-        if (blackTop > whiteTop) {
-          return {
-            winner: "Black wins.",
-            winningType: " - with pair: ",
-            winningCard: ` highest pair: `,
-          };
-        } else {
-          return {
-            winner: "White wins.",
-            winningType: " - with pair: ",
-            winningCard: ` highest pair: `,
-          };
-        }
-      }
-    }
-  }
-
-  if (blackTop > whiteTop) {
-    console.log(393);
-    return {
-      winner: "Black wins.",
-      winningType: " - with high card: ",
-      winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
-    };
-  } else {
-    console.log(400);
-    return {
-      winner: "White wins.",
-      winningType: " - with high card: ",
-      winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
-    };
-  }
+  // if (blackTop > whiteTop) {
+  //   console.log(393);
+  //   return {
+  //     winner: "Black",winningType: "straight flush",
+  //     winningType: "high card: ",
+  //     winningCard: ` highest card: ${blackTop.cardValue}${blackTop.cardKind}`,
+  //   };
+  // } else {
+  //   console.log(400);
+  //   return {
+  //     winner: "White",winningType: "straight flush",
+  //     winningType: "high card: ",
+  //     winningCard: ` highest card: ${whiteTop.cardValue}${whiteTop.cardKind}`,
+  //   };
+  // }
 }
 
 export default gameResult;
