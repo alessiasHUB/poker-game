@@ -109,6 +109,11 @@ function cardOfMultiples(
     return ["Both", Number(bestCardWhite)];
   }
 }
+//------------------------------------------------return full card based on value
+// todo: finish this function!, input should come from above function
+function getFullCard(num: number): Card {
+  return { cardValue: 2, cardKind: "S" };
+}
 //------------------------------------------------checks how many of same in hands
 function numOfSame(hands: InputCards): 0 | object[] {
   const blackHand = hands.Black;
