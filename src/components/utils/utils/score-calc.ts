@@ -231,12 +231,12 @@ function isFullHouse(hands: InputCards): "Both" | "Black" | "White" | 0 {
   }
 }
 //------------------------------------------------checks if cards are in a row
-function isInARow(hands: InputCards): any  {
+function isInARow(hands: InputCards): "White" | "Black" | "Both" | 0 {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;
   const whiteHand = hands.White;
-  const result = []
+  const result: ("White" | "Black" | "Both")[] = [];
 
   for (let card of blackHand) {
     handOfCardsBlack.push(card.cardValue);
@@ -247,7 +247,8 @@ function isInARow(hands: InputCards): any  {
     if (previousCard + 1 === sortedHand[i]) {
       previousCard = sortedHand[i];
     } else {
-      result.push("Black");
+      // push the opposite for a simpler return
+      result.push("White");
       break;
     }
   }
@@ -261,34 +262,72 @@ function isInARow(hands: InputCards): any  {
     if (previousCard + 1 === sortedHand[i]) {
       previousCard = sortedHand[i];
     } else {
-      result.push("White");
+      // push the opposite for a simpler return
+      result.push("Black");
       break;
     }
   }
 
-  if(){}
-  
+  if (result.length === 2) {
+    return 0;
+  } else if (result.length === 1) {
+    return result[0];
+  } else {
+    return "Both";
+  }
 }
 //------------------------------------------------checks if cards are one suite
-function isOneSuite(hand: Card[]): boolean {
-  let handOfCards: number = 0;
+function isOneSuite(hands: InputCards): "White" | "Black" | "Both" | 0 {
+  let handOfCardsBlack: number = 0;
+  let handOfCardsWhite: number = 0;
+  const blackHand = hands.Black;
+  const whiteHand = hands.White;
+
   const suiteValue = { C: 0.1, D: 1, S: 4, H: 16 };
   const trueCases: number[] = [0.4, 4, 16, 64];
-  for (let card of hand) {
-    handOfCards += suiteValue[card.cardKind];
+  for (let card of blackHand) {
+    handOfCardsBlack += suiteValue[card.cardKind];
   }
-  if (trueCases.includes(handOfCards)) {
-    return true;
+  for (let card of whiteHand) {
+    handOfCardsWhite += suiteValue[card.cardKind];
+  }
+  if (
+    trueCases.includes(handOfCardsBlack) &&
+    trueCases.includes(handOfCardsWhite)
+  ) {
+    return "Both";
+  } else if (
+    trueCases.includes(handOfCardsBlack) &&
+    !trueCases.includes(handOfCardsWhite)
+  ) {
+    return "Black";
+  } else if (
+    !trueCases.includes(handOfCardsBlack) &&
+    trueCases.includes(handOfCardsWhite)
+  ) {
+    return "White";
   } else {
-    return false;
+    return 0;
   }
 }
 //------------------------------------------------checks if cards are straight flush
-function isStraightFlush(hand: Card[]): boolean {
-  if (isInARow(hand) && isOneSuite(hand)) {
-    return true;
+function isStraightFlush(hands: InputCards): any {
+  if (isInARow(hands) === "Black" && isOneSuite(hands) === "Black") {
+    return "Black";
+  } else if (isInARow(hands) === "White" && isOneSuite(hands) === "White") {
+    return "White";
+  } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "Both") {
+    return "Both";
+  } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "White") {
+    return "White";
+  } else if (isInARow(hands) === "Both" && isOneSuite(hands) === "Black") {
+    return "Black";
+  } else if (isInARow(hands) === "White" && isOneSuite(hands) === "Both") {
+    return "White";
+  } else if (isInARow(hands) === "Black" && isOneSuite(hands) === "Both") {
+    return "Black";
   } else {
-    return false;
+    return 0;
   }
 }
 
