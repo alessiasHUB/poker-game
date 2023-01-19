@@ -447,9 +447,10 @@ function isStraightFlush(
   }
 }
 //------------------------------------------------checks if cards are royal flush
-// todo^^^^^ (check if there's an ACE)
+// todo^^^^^ (check if there's an ACE in winning hand)
 
 //=====================GAME RESULT==============================================
+//todo: add winning hand to return type?
 //------------------------------------------------game result function
 function gameResult(inputCards: InputCards): ReturnType {
   // royal flush

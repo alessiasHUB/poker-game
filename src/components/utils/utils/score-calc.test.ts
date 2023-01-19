@@ -19,9 +19,8 @@ test("Check win by high card", () => {
       ],
     })
   ).toEqual({
-    winner: "White wins.",
-    winningType: " - with high card: ",
-    winningCard: ` highest card: 14H`,
+    winner: "White",
+    winningType: "high card",
   });
 });
 
@@ -44,8 +43,8 @@ test("Check win by full house", () => {
       ],
     })
   ).toEqual({
-    winner: "Black wins.",
-    winningType: " - with full house: ",
+    winner: "Black",
+    winningType: "full house",
   });
 });
 
