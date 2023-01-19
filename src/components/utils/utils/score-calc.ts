@@ -191,7 +191,7 @@ function isFourOfAKind(
 function isThreeOfAKind(
   handObjs: object[],
   hands: InputCards
-): "Both" | "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
+): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
   const handObjBlack = handObjs[0];
   const handObjWhite = handObjs[1];
   const result: ("White" | "Black")[] = [];
@@ -217,20 +217,46 @@ function isThreeOfAKind(
   }
 }
 //------------------------------------------------checks if two pairs in hands
-// todo
 function isTwoPairs(
   handObjs: object[],
   hands: InputCards
 ): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  return "White";
+  const numPairsResult = numPairs(handObjs);
+  let numInPairsResult: number;
+  if (numPairsResult !== 0) {
+    numInPairsResult = Number(numPairsResult.slice(-1));
+    if (numInPairsResult === 2) {
+      if (numPairsResult.slice(0, 5) === "Black") {
+        return "Black";
+      } else if (numPairsResult[0] === "W") {
+        return "White";
+      } else {
+        const ultimateWinner = cardOfMultiples(handObjs, hands, 2);
+        return ultimateWinner;
+      }
+    } else return 0;
+  } else return 0;
 }
 //------------------------------------------------checks if one pair in hands
-// todo
 function isOnePair(
   handObjs: object[],
   hands: InputCards
 ): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  return "White";
+  const numPairsResult = numPairs(handObjs);
+  let numInPairsResult: number;
+  if (numPairsResult !== 0) {
+    numInPairsResult = Number(numPairsResult.slice(-1));
+    if (numInPairsResult === 1) {
+      if (numPairsResult.slice(0, 5) === "Black") {
+        return "Black";
+      } else if (numPairsResult[0] === "W") {
+        return "White";
+      } else {
+        const ultimateWinner = cardOfMultiples(handObjs, hands, 2);
+        return ultimateWinner;
+      }
+    } else return 0;
+  } else return 0;
 }
 //------------------------------------------------checks number of pairs in hands
 function numPairs(
@@ -275,42 +301,23 @@ function isFullHouse(
   if (handObjs === 0) {
     return 0;
   } else {
-    if (
-      isThreeOfAKind(handObjs, hands) === "Both" &&
-      numPairs(handObjs) === "Both1"
-    ) {
-      const winner = cardOfMultiples(handObjs, hands, 3);
+    const threeResult = isThreeOfAKind(handObjs, hands);
+    const numPairsResult = numPairs(handObjs);
+    if (threeResult === "Black" && numPairsResult === "Both1") {
+      return "Black";
+    } else if (threeResult === "White" && numPairsResult === "Both1") {
+      return "White";
+    } else if (threeResult === "Black" && numPairsResult === "Black1") {
+      return "Black";
+    } else if (threeResult === "White" && numPairsResult === "White1") {
+      return "White";
+    } else if (Array.isArray(threeResult)) {
+      const winner: ["White" | "Black" | "Both", Card] = cardOfMultiples(
+        handObjs,
+        hands,
+        3
+      );
       return winner;
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "Both" &&
-      numPairs(handObjs) === "Black1"
-    ) {
-      return "Black";
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "Both" &&
-      numPairs(handObjs) === "White1"
-    ) {
-      return "White";
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "Black" &&
-      numPairs(handObjs) === "Both1"
-    ) {
-      return "Black";
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "White" &&
-      numPairs(handObjs) === "Both1"
-    ) {
-      return "White";
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "Black" &&
-      numPairs(handObjs) === "Black1"
-    ) {
-      return "Black";
-    } else if (
-      isThreeOfAKind(handObjs, hands) === "White" &&
-      numPairs(handObjs) === "White1"
-    ) {
-      return "White";
     } else {
       return 0;
     }
@@ -319,12 +326,12 @@ function isFullHouse(
 //------------------------------------------------checks if cards are in a row
 function isStraight(
   hands: InputCards
-): "White" | "Black" | "Both" | 0 | ["White" | "Black" | "Both", Card] {
+): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;
   const whiteHand = hands.White;
-  const result: ("White" | "Black" | "Both")[] = [];
+  const result: ("White" | "Black")[] = [];
 
   for (let card of blackHand) {
     handOfCardsBlack.push(card.cardValue);
@@ -406,21 +413,35 @@ function isFlush(
 function isStraightFlush(
   hands: InputCards
 ): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  if (isStraight(hands) === "Black" && isFlush(hands) === "Black") {
+  const straightResult = isStraight(hands);
+  const flushResult = isFlush(hands);
+  if (straightResult === "Black" && flushResult === "Black") {
     return "Black";
-  } else if (isStraight(hands) === "White" && isFlush(hands) === "White") {
+  } else if (straightResult === "White" && flushResult === "White") {
     return "White";
-  } else if (isStraight(hands) === "Both" && isFlush(hands) === "Both") {
-    const winner = highestCardInHands(hands);
-    return winner;
-  } else if (isStraight(hands) === "Both" && isFlush(hands) === "White") {
-    return "White";
-  } else if (isStraight(hands) === "Both" && isFlush(hands) === "Black") {
-    return "Black";
-  } else if (isStraight(hands) === "White" && isFlush(hands) === "Both") {
-    return "White";
-  } else if (isStraight(hands) === "Black" && isFlush(hands) === "Both") {
-    return "Black";
+  } else if (Array.isArray(straightResult)) {
+    if (straightResult[0] === "Both" && flushResult === "White") {
+      return "White";
+    } else if (straightResult[0] === "Both" && flushResult === "Black") {
+      return "Black";
+    } else if (Array.isArray(flushResult)) {
+      if (straightResult[0] === "Both" && flushResult[0] === "Both") {
+        const winner = highestCardInHands(hands);
+        return winner;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  } else if (Array.isArray(flushResult)) {
+    if (straightResult === "White" && flushResult[0] === "Both") {
+      return "White";
+    } else if (straightResult === "Black" && flushResult[0] === "Both") {
+      return "Black";
+    } else {
+      return 0;
+    }
   } else {
     return 0;
   }
@@ -690,7 +711,7 @@ function gameResult(inputCards: InputCards): ReturnType {
     } else {
       return { winner: "Tie" };
     }
-  }
+  } else return { winner: "Tie" };
 }
 
 export default gameResult;
