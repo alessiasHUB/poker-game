@@ -16,21 +16,21 @@
  */
 
 //=====================TYPES=============================================
-type CardKind = "C" | "D" | "S" | "H";
+export type CardKind = "C" | "D" | "S" | "H";
 // todo: all suites are of the same strength in poker, can remove
 const kindValue = { C: 0.1, D: 0.2, S: 0.3, H: 0.4 };
-type CardValue = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+export type CardValue = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
-interface Card {
+export interface Card {
   cardKind: CardKind;
   cardValue: CardValue;
 }
-type InputCards = {
+export type InputCards = {
   Black: Card[];
   White: Card[];
 };
-type Winner = "White" | "Black" | "Tie";
-type WinningType =
+export type Winner = "White" | "Black" | "Tie";
+export type WinningType =
   | "high card"
   | "pair"
   | "two pairs"
@@ -41,7 +41,7 @@ type WinningType =
   | "four of a kind"
   | "straight flush"
   | "royal flush";
-type WinningCard = Card;
+export type WinningCard = Card;
 export type ReturnType =
   | {
       winner: Winner;
@@ -80,6 +80,7 @@ function highestCardInHands(
     return ["Both", topCardWhite];
   }
 }
+
 //------------------------------------------------return value of card from multiples
 function cardOfMultiples(
   objs: object[],
@@ -117,6 +118,7 @@ function cardOfMultiples(
     return ["Both", winningCard];
   }
 }
+
 //------------------------------------------------return full card based on value
 function getFullCard(cardVal: number, hand: Card[]): Card {
   for (let card of hand) {
@@ -127,6 +129,7 @@ function getFullCard(cardVal: number, hand: Card[]): Card {
   // this will not run
   return { cardValue: 2, cardKind: "S" };
 }
+
 //------------------------------------------------checks how many of same in hands
 function numOfSame(hands: InputCards): 0 | object[] {
   const blackHand = hands.Black;
@@ -158,6 +161,7 @@ function numOfSame(hands: InputCards): 0 | object[] {
     return [pairObjBlack, pairObjWhite];
   }
 }
+
 //------------------------------------------------checks four of a kind in hands
 function isFourOfAKind(
   handObjs: object[],
@@ -187,6 +191,7 @@ function isFourOfAKind(
     return 0;
   }
 }
+
 //------------------------------------------------checks three of a kind in hands
 function isThreeOfAKind(
   handObjs: object[],
@@ -216,6 +221,7 @@ function isThreeOfAKind(
     return 0;
   }
 }
+
 //------------------------------------------------checks if two pairs in hands
 function isTwoPairs(
   handObjs: object[],
@@ -237,6 +243,7 @@ function isTwoPairs(
     } else return 0;
   } else return 0;
 }
+
 //------------------------------------------------checks if one pair in hands
 function isOnePair(
   handObjs: object[],
@@ -258,6 +265,7 @@ function isOnePair(
     } else return 0;
   } else return 0;
 }
+
 //------------------------------------------------checks number of pairs in hands
 function numPairs(
   handObjs: object[]
@@ -293,6 +301,7 @@ function numPairs(
     return 0;
   }
 }
+
 //------------------------------------------------checks if cards are a full house
 function isFullHouse(
   hands: InputCards
@@ -323,6 +332,7 @@ function isFullHouse(
     }
   }
 }
+
 //------------------------------------------------checks if cards are in a row
 function isStraight(
   hands: InputCards
@@ -341,13 +351,10 @@ function isStraight(
   for (let i = 1; i < sortedHand.length; i++) {
     if (previousCard + 1 === sortedHand[i]) {
       previousCard = sortedHand[i];
-    } else {
-      // push the opposite for a simpler return
-      result.push("White");
+      result.push("Black");
       break;
     }
   }
-
   for (let card of whiteHand) {
     handOfCardsWhite.push(card.cardValue);
   }
@@ -356,9 +363,7 @@ function isStraight(
   for (let i = 1; i < sortedHand.length; i++) {
     if (previousCard + 1 === sortedHand[i]) {
       previousCard = sortedHand[i];
-    } else {
-      // push the opposite for a simpler return
-      result.push("Black");
+      result.push("White");
       break;
     }
   }
@@ -372,17 +377,20 @@ function isStraight(
     return winner;
   }
 }
-//------------------------------------------------checks if cards are one suite9
+
+//------------------------------------------------checks if cards are one suite
 function isFlush(
   hands: InputCards
 ): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
   let handOfCardsBlack: number = 0;
   let handOfCardsWhite: number = 0;
+
   const blackHand = hands.Black;
   const whiteHand = hands.White;
 
   const suiteValue = { C: 0.1, D: 1, S: 4, H: 16 };
-  const trueCases: number[] = [0.4, 4, 16, 64];
+  const trueCases: number[] = [0.5, 5, 20, 80];
+
   for (let card of blackHand) {
     handOfCardsBlack += suiteValue[card.cardKind];
   }
@@ -409,12 +417,14 @@ function isFlush(
     return 0;
   }
 }
+
 //------------------------------------------------checks if cards are straight flush
 function isStraightFlush(
   hands: InputCards
 ): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
   const straightResult = isStraight(hands);
   const flushResult = isFlush(hands);
+
   if (straightResult === "Black" && flushResult === "Black") {
     return "Black";
   } else if (straightResult === "White" && flushResult === "White") {
@@ -456,8 +466,9 @@ function gameResult(inputCards: InputCards): ReturnType {
   // royal flush
   // straight flush
   const straightFlushResult = isStraightFlush(inputCards);
+  console.log(459, straightFlushResult);
   if (straightFlushResult !== 0) {
-    console.log(399);
+    console.log(461, straightFlushResult);
     if (straightFlushResult === "Black") {
       return { winner: "Black", winningType: "straight flush" };
     } else if (straightFlushResult === "White") {
