@@ -191,7 +191,7 @@ function isFourOfAKind(
 function isThreeOfAKind(
   handObjs: object[],
   hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
+): "Both" | "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
   const handObjBlack = handObjs[0];
   const handObjWhite = handObjs[1];
   const result: ("White" | "Black")[] = [];
