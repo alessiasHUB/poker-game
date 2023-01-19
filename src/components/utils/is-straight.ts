@@ -1,10 +1,10 @@
-import { InputCards, Card } from "../score-calc";
+import { InputCards, WinnerAndCard } from "../score-calc";
 import highestCardInHands from "./highest-card-in-hands";
 
 //------------------------------------------------checks if cards are in a row
 export default function isStraight(
   hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
+): "White" | "Black" | 0 | WinnerAndCard {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;

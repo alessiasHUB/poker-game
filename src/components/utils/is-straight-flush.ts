@@ -1,11 +1,11 @@
-import { Card, InputCards } from "../score-calc";
+import { Card, InputCards, WinnerAndCard } from "../score-calc";
 import isStraight from "./is-straight";
 import isFlush from "./is-flush";
 
 //------------------------------------------------checks if cards are straight flush
 function isStraightFlush(
   hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
+): "White" | "Black" | 0 | WinnerAndCard {
   const straightResult = isStraight(hands);
   const flushResult = isFlush(hands);
   console.log(straightResult, flushResult);
@@ -14,12 +14,12 @@ function isStraightFlush(
     return "Black";
   } else if (straightResult === "White" && flushResult === "White") {
     return "White";
-  } else if (Array.isArray(straightResult)) {
+  } else if ( straightResult!=="White"&& straightResult!=="Black" &&  straightResult) {
     if (straightResult[0] === "Both" && flushResult === "White") {
       return "White";
     } else if (straightResult[0] === "Both" && flushResult === "Black") {
       return "Black";
-    } else if (Array.isArray(flushResult)) {
+    } else if (typeof flushResult)) {
       if (straightResult[0] === "Both" && flushResult[0] === "Both") {
         const winner = highestCardInHands(hands);
         return winner;
@@ -29,7 +29,7 @@ function isStraightFlush(
     } else {
       return 0;
     }
-  } else if (Array.isArray(flushResult)) {
+  } else if (typeof flushResult)) {
     if (straightResult === "White" && flushResult[0] === "Both") {
       return "White";
     } else if (straightResult === "Black" && flushResult[0] === "Both") {

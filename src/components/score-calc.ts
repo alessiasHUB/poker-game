@@ -30,6 +30,7 @@ export type InputCards = {
   White: Card[];
 };
 export type Winner = "White" | "Black" | "Tie";
+export type WinnerAndCard = ["White" | "Black" | "Both", Card];
 export type WinningType =
   | "high card"
   | "pair"
