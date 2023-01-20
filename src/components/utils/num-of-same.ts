@@ -23,8 +23,16 @@ export default function numOfSame(hands: InputCards): false | object[] {
   }
 
   if (
-    !Object.values(pairObjBlack).includes(2 | 3 | 4) &&
-    !Object.values(pairObjWhite).includes(2 | 3 | 4)
+    !(
+      Object.values(pairObjBlack).includes(2) ||
+      Object.values(pairObjBlack).includes(3) ||
+      Object.values(pairObjBlack).includes(4)
+    ) &&
+    !(
+      Object.values(pairObjWhite).includes(2) ||
+      Object.values(pairObjWhite).includes(3) ||
+      Object.values(pairObjWhite).includes(4)
+    )
   ) {
     return false;
   } else {

@@ -53,145 +53,14 @@ export type ReturnType =
 
 //=====================HELPER FUNCTIONS==============================================
 //------------------------------------------------checks top card in hands
-function highestCardInHands(
-  hands: InputCards
-): ["White" | "Black" | "Both", Card] {
-  let handOfCardsBlack: number[] = [];
-  let handOfCardsWhite: number[] = [];
-  const blackHand = hands.Black;
-  const whiteHand = hands.White;
-
-  for (let card of blackHand) {
-    handOfCardsBlack.push(card.cardValue + kindValue[card.cardKind]);
-  }
-  for (let card of whiteHand) {
-    handOfCardsWhite.push(card.cardValue + kindValue[card.cardKind]);
-  }
-  let largestCard = Math.max(...handOfCardsBlack);
-  let indexOfLargestCard = handOfCardsBlack.indexOf(largestCard);
-  let topCardBlack: Card = blackHand[indexOfLargestCard];
-  largestCard = Math.max(...handOfCardsWhite);
-  indexOfLargestCard = handOfCardsWhite.indexOf(largestCard);
-  let topCardWhite: Card = whiteHand[indexOfLargestCard];
-  if (topCardBlack > topCardWhite) {
-    return ["Black", topCardBlack];
-  } else if (topCardBlack < topCardWhite) {
-    return ["White", topCardWhite];
-  } else {
-    return ["Both", topCardWhite];
-  }
-}
 
 //------------------------------------------------return value of card from multiples
-function cardOfMultiples(
-  objs: object[],
-  hands: InputCards,
-  num: number
-): ["White" | "Black" | "Both", Card] {
-  let bestCardBlack: number = 0;
-  let bestCardWhite: number = 0;
-  const objBlack = objs[0];
-  const objWhite = objs[1];
-
-  Object.entries(objBlack).find(([key, value]) => {
-    if (value === num) {
-      bestCardBlack = Number(key);
-      return true;
-    }
-    return false;
-  });
-  Object.entries(objWhite).find(([key, value]) => {
-    if (value === num) {
-      bestCardWhite = Number(key);
-      return true;
-    }
-    return false;
-  });
-
-  if (bestCardBlack > bestCardWhite) {
-    const winningCard: Card = getFullCard(bestCardBlack, hands.Black);
-    return ["Black", winningCard];
-  } else if (bestCardBlack < bestCardWhite) {
-    const winningCard: Card = getFullCard(bestCardWhite, hands.White);
-    return ["White", winningCard];
-  } else {
-    const winningCard: Card = getFullCard(bestCardWhite, hands.White);
-    return ["Both", winningCard];
-  }
-}
 
 //------------------------------------------------return full card based on value
-function getFullCard(cardVal: number, hand: Card[]): Card {
-  for (let card of hand) {
-    if (card.cardValue === cardVal) {
-      return card;
-    }
-  }
-  // this will not run
-  return { cardValue: 2, cardKind: "S" };
-}
 
 //------------------------------------------------checks how many of same in hands
-function numOfSame(hands: InputCards): 0 | object[] {
-  const blackHand = hands.Black;
-  const whiteHand = hands.White;
-  const pairObjBlack: any = {};
-  const pairObjWhite: any = {};
-
-  for (let card of blackHand) {
-    if (pairObjBlack[card.cardValue] === undefined) {
-      pairObjBlack[card.cardValue] = 1;
-    } else {
-      pairObjBlack[card.cardValue]++;
-    }
-  }
-  for (let card of whiteHand) {
-    if (pairObjWhite[card.cardValue] === undefined) {
-      pairObjWhite[card.cardValue] = 1;
-    } else {
-      pairObjWhite[card.cardValue]++;
-    }
-  }
-
-  if (
-    !Object.values(pairObjBlack).includes(2 | 3 | 4) &&
-    !Object.values(pairObjWhite).includes(2 | 3 | 4)
-  ) {
-    return 0;
-  } else {
-    return [pairObjBlack, pairObjWhite];
-  }
-}
 
 //------------------------------------------------checks four of a kind in hands
-function isFourOfAKind(
-  handObjs: object[],
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  const handObjBlack = handObjs[0];
-  const handObjWhite = handObjs[1];
-  const result: ("White" | "Black")[] = [];
-  if (
-    Object.keys(handObjBlack)[Object.values(handObjBlack).indexOf(4)] ===
-    undefined
-  ) {
-    result.push("Black");
-  }
-  if (
-    Object.keys(handObjWhite)[Object.values(handObjWhite).indexOf(4)] ===
-    undefined
-  ) {
-    result.push("White");
-  }
-  if (result.length === 2) {
-    const winner = cardOfMultiples(handObjs, hands, 4);
-    return winner;
-  } else if (result.length === 1) {
-    return result[0];
-  } else {
-    return 0;
-  }
-}
 
 //------------------------------------------------checks three of a kind in hands
 function isThreeOfAKind(
