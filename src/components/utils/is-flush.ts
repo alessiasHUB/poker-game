@@ -1,10 +1,8 @@
-import { InputCards, Card } from "../score-calc";
+import { InputCards, ReturnType } from "../score-calc";
 import highestCardInHands from "./highest-card-in-hands";
 
 //------------------------------------------------checks if cards are one suite9
-export default function isFlush(
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
+export default function isFlush(hands: InputCards): false | ReturnType {
   let handOfCardsBlack: number = 0;
   let handOfCardsWhite: number = 0;
   const blackHand = hands.Black;
@@ -24,18 +22,22 @@ export default function isFlush(
     trueCases.includes(handOfCardsWhite)
   ) {
     const winner = highestCardInHands(hands);
-    return winner;
+    if (winner[0] === "Both") {
+      return { winner: "Tie" };
+    } else {
+      return { winner: winner[0], winningCard: winner[1] };
+    }
   } else if (
     trueCases.includes(handOfCardsBlack) &&
     !trueCases.includes(handOfCardsWhite)
   ) {
-    return "Black";
+    return { winner: "Black" };
   } else if (
     !trueCases.includes(handOfCardsBlack) &&
     trueCases.includes(handOfCardsWhite)
   ) {
-    return "White";
+    return { winner: "White" };
   } else {
-    return 0;
+    return false;
   }
 }

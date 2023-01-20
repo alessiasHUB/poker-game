@@ -1,10 +1,8 @@
-import { InputCards, WinnerAndCard } from "../score-calc";
+import { InputCards, ReturnType } from "../score-calc";
 import highestCardInHands from "./highest-card-in-hands";
 
 //------------------------------------------------checks if cards are in a row
-export default function isStraight(
-  hands: InputCards
-): "White" | "Black" | 0 | WinnerAndCard {
+export default function isStraight(hands: InputCards): false | ReturnType {
   let handOfCardsBlack: number[] = [];
   let handOfCardsWhite: number[] = [];
   const blackHand = hands.Black;
@@ -14,15 +12,13 @@ export default function isStraight(
   for (let card of blackHand) {
     handOfCardsBlack.push(card.cardValue);
   }
-  let sortedHand = handOfCardsBlack.sort();
+  let sortedHand = handOfCardsBlack.sort((a, b) => a - b);
   let previousCard = sortedHand[0];
   let count = 0;
   for (let i = 1; i < sortedHand.length; i++) {
     if (previousCard + 1 === sortedHand[i]) {
       previousCard++;
       count++;
-      console.log("Black", count);
-      console.log(previousCard - 1, sortedHand[i]);
     } else if (previousCard + 1 !== sortedHand[i]) {
       break;
     }
@@ -34,7 +30,7 @@ export default function isStraight(
   for (let card of whiteHand) {
     handOfCardsWhite.push(card.cardValue);
   }
-  sortedHand = handOfCardsWhite.sort();
+  sortedHand = handOfCardsWhite.sort((a, b) => a - b);
   previousCard = sortedHand[0];
   count = 0;
   for (let i = 1; i < sortedHand.length; i++) {
@@ -48,13 +44,16 @@ export default function isStraight(
       result.push("White");
     }
   }
-
   if (result.length === 2) {
     const winner = highestCardInHands(hands);
-    return winner;
+    if (winner[0] === "Both") {
+      return { winner: "Tie" };
+    } else {
+      return { winner: winner[0], winningCard: winner[1] };
+    }
   } else if (result.length === 1) {
-    return result[0];
+    return { winner: result[0] };
   } else {
-    return 0;
+    return false;
   }
 }

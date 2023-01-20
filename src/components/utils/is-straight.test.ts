@@ -18,7 +18,7 @@ test("Check win by straight", () => {
         { cardValue: 13, cardKind: "H" },
       ],
     })
-  ).toEqual("Black");
+  ).toEqual({ winner: "Black" });
   expect(
     isStraight({
       Black: [
@@ -36,7 +36,7 @@ test("Check win by straight", () => {
         { cardValue: 6, cardKind: "H" },
       ],
     })
-  ).toEqual("White");
+  ).toEqual({ winner: "White" });
   expect(
     isStraight({
       Black: [
@@ -54,7 +54,7 @@ test("Check win by straight", () => {
         { cardValue: 6, cardKind: "H" },
       ],
     })
-  ).toEqual(["Black", { cardValue: 13, cardKind: "H" }]);
+  ).toEqual({ winner: "Black", winningCard: { cardValue: 13, cardKind: "H" } });
   expect(
     isStraight({
       Black: [
@@ -72,5 +72,23 @@ test("Check win by straight", () => {
         { cardValue: 6, cardKind: "H" },
       ],
     })
-  ).toEqual(0);
+  ).toEqual(false);
+  expect(
+    isStraight({
+      Black: [
+        { cardValue: 8, cardKind: "S" },
+        { cardValue: 10, cardKind: "S" },
+        { cardValue: 11, cardKind: "S" },
+        { cardValue: 12, cardKind: "S" },
+        { cardValue: 13, cardKind: "S" },
+      ],
+      White: [
+        { cardValue: 8, cardKind: "H" },
+        { cardValue: 10, cardKind: "H" },
+        { cardValue: 11, cardKind: "S" },
+        { cardValue: 12, cardKind: "H" },
+        { cardValue: 13, cardKind: "H" },
+      ],
+    })
+  ).toEqual(false);
 });
