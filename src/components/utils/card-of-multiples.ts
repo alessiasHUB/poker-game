@@ -6,13 +6,12 @@ export default function cardOfMultiples(
   objs: object[],
   hands: InputCards,
   num: number
-): ReturnType | false {
+): ReturnType {
   const objBlack = objs[0];
   const objWhite = objs[1];
 
   const bestCardBlack = Object.entries(objBlack).find(([key, value]) => {
     if (value === num) {
-      console.log(key);
       return key;
     }
     return undefined;
@@ -23,7 +22,6 @@ export default function cardOfMultiples(
     }
     return undefined;
   });
-  console.log(bestCardBlack, bestCardWhite);
   if (bestCardBlack && bestCardWhite) {
     if (Number(bestCardBlack[0]) > Number(bestCardWhite[0])) {
       const winningCard: Card = getFullCard(
@@ -37,7 +35,9 @@ export default function cardOfMultiples(
         hands.White
       );
       return { winner: "White", winningCard: winningCard };
-    } else return { winner: "Tie" };
+    } else {
+      return { winner: "Tie" };
+    }
   } else {
     return { winner: "Tie" };
   }
