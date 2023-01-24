@@ -3,7 +3,7 @@ import isStraight from "./is-straight";
 import isFlush from "./is-flush";
 
 //------------------------------------------------checks if cards are straight flush
-function isStraightFlush(hands: InputCards): false | ReturnType {
+export default function isStraightFlush(hands: InputCards): false | ReturnType {
   const straightResult = isStraight(hands);
   const flushResult = isFlush(hands);
   if (!straightResult || !flushResult) {
@@ -40,5 +40,3 @@ function isStraightFlush(hands: InputCards): false | ReturnType {
     }
   }
 }
-
-export { isStraight, isFlush, isStraightFlush };
