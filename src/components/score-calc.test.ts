@@ -46,16 +46,16 @@ test("Check win by straight flush", () => {
   expect(
     gameResult({
       Black: [
+        { cardValue: 11, cardKind: "H" },
         { cardValue: 9, cardKind: "H" },
         { cardValue: 10, cardKind: "H" },
-        { cardValue: 11, cardKind: "H" },
-        { cardValue: 12, cardKind: "H" },
         { cardValue: 8, cardKind: "H" },
+        { cardValue: 12, cardKind: "H" },
       ],
       White: [
         { cardValue: 9, cardKind: "H" },
-        { cardValue: 10, cardKind: "H" },
         { cardValue: 11, cardKind: "H" },
+        { cardValue: 10, cardKind: "H" },
         { cardValue: 12, cardKind: "H" },
         { cardValue: 13, cardKind: "H" },
       ],
@@ -63,7 +63,6 @@ test("Check win by straight flush", () => {
   ).toEqual({
     winner: "White",
     winningType: "straight flush",
-    winningCard: { cardValue: 13, cardKind: "H" },
   });
 });
 
