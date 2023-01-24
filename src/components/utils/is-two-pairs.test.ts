@@ -100,8 +100,32 @@ test("Check win by two pairs", () => {
   expect(
     isTwoPairs(
       [
-        { "2": 1, "12": 2, "4": 1 },
-        { "9": 1, "12": 2, "2": 1 },
+        { "2": 1, "12": 2, "4": 1, "3": 1 },
+        { "9": 1, "12": 2, "2": 1, "5": 1 },
+      ],
+      {
+        White: [
+          { cardValue: 9, cardKind: "H" },
+          { cardValue: 5, cardKind: "S" },
+          { cardValue: 12, cardKind: "D" },
+          { cardValue: 12, cardKind: "H" },
+          { cardValue: 2, cardKind: "C" },
+        ],
+        Black: [
+          { cardValue: 2, cardKind: "D" },
+          { cardValue: 3, cardKind: "H" },
+          { cardValue: 12, cardKind: "S" },
+          { cardValue: 12, cardKind: "C" },
+          { cardValue: 4, cardKind: "D" },
+        ],
+      }
+    )
+  ).toEqual(false);
+  expect(
+    isTwoPairs(
+      [
+        { "2": 2, "12": 2, "4": 1, "5": 1 },
+        { "9": 2, "12": 2, "2": 1 },
       ],
       {
         White: [
@@ -113,12 +137,12 @@ test("Check win by two pairs", () => {
         ],
         Black: [
           { cardValue: 2, cardKind: "D" },
-          { cardValue: 2, cardKind: "H" },
+          { cardValue: 5, cardKind: "H" },
           { cardValue: 12, cardKind: "S" },
           { cardValue: 12, cardKind: "C" },
           { cardValue: 4, cardKind: "D" },
         ],
       }
     )
-  ).toEqual(false);
+  ).toEqual({ winner: "White", winningCard: 9 });
 });

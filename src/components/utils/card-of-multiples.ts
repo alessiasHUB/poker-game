@@ -17,15 +17,13 @@ export default function cardOfMultiples(
     return value === num;
   });
 
-  console.log("Black", bestCardsBlack, "\n", "White", bestCardsWhite);
-
   const blackMax = Math.max(
     ...bestCardsBlack.map((subArray) => Number(subArray[0]))
   );
   const whiteMax = Math.max(
     ...bestCardsWhite.map((subArray) => Number(subArray[0]))
   );
-  console.log("BlackMax: ", blackMax, "\n", "WhiteMax: ", whiteMax);
+
   if (blackMax > whiteMax) {
     // const winningCard: Card = getFullCard(blackMax, hands.Black);
     return { winner: "Black", winningCard: blackMax };
@@ -44,18 +42,10 @@ export default function cardOfMultiples(
       const whiteSecondVal = bestCardsWhite.filter(
         (subArray) => Number(subArray[0]) !== whiteMax
       );
-      console.log(
-        "Black2Max: ",
-        blackSecondVal,
-        "\n",
-        "White2Max: ",
-        whiteSecondVal
-      );
+
       if (blackSecondVal[0][0] > whiteSecondVal[0][0]) {
-        // const winningCard: Card = getFullCard(blackSecondVal, hands.Black);
         return { winner: "Black", winningCard: Number(blackSecondVal[0][0]) };
       } else if (blackSecondVal[0][0] < whiteSecondVal[0][0]) {
-        // const winningCard: Card = getFullCard(whiteSecondVal, hands.White);
         return { winner: "White", winningCard: Number(whiteSecondVal[0][0]) };
       }
     } else {

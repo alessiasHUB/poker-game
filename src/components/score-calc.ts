@@ -65,48 +65,8 @@ export type ReturnType =
 //------------------------------------------------checks three of a kind in hands
 
 //------------------------------------------------checks if two pairs in hands
-function isTwoPairs(
-  handObjs: object[],
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  const numPairsResult = numPairs(handObjs);
-  let numInPairsResult: number;
-  if (numPairsResult !== 0) {
-    numInPairsResult = Number(numPairsResult.slice(-1));
-    if (numInPairsResult === 2) {
-      if (numPairsResult.slice(0, 5) === "Black") {
-        return "Black";
-      } else if (numPairsResult[0] === "W") {
-        return "White";
-      } else {
-        const ultimateWinner = cardOfMultiples(handObjs, hands, 2);
-        return ultimateWinner;
-      }
-    } else return 0;
-  } else return 0;
-}
 
 //------------------------------------------------checks if one pair in hands
-function isOnePair(
-  handObjs: object[],
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  const numPairsResult = numPairs(handObjs);
-  let numInPairsResult: number;
-  if (numPairsResult !== 0) {
-    numInPairsResult = Number(numPairsResult.slice(-1));
-    if (numInPairsResult === 1) {
-      if (numPairsResult.slice(0, 5) === "Black") {
-        return "Black";
-      } else if (numPairsResult[0] === "W") {
-        return "White";
-      } else {
-        const ultimateWinner = cardOfMultiples(handObjs, hands, 2);
-        return ultimateWinner;
-      }
-    } else return 0;
-  } else return 0;
-}
 
 //------------------------------------------------checks number of pairs in hands
 
