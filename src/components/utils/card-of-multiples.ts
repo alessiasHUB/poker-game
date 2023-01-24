@@ -10,35 +10,56 @@ export default function cardOfMultiples(
   const objBlack = objs[0];
   const objWhite = objs[1];
 
-  const bestCardBlack = Object.entries(objBlack).find(([key, value]) => {
-    if (value === num) {
-      return key;
-    }
-    return undefined;
+  const bestCardsBlack = Object.entries(objBlack).filter(([key, value]) => {
+    return value === num;
   });
-  const bestCardWhite = Object.entries(objWhite).find(([key, value]) => {
-    if (value === num) {
-      return key;
-    }
-    return undefined;
+  const bestCardsWhite = Object.entries(objWhite).filter(([key, value]) => {
+    return value === num;
   });
-  if (bestCardBlack && bestCardWhite) {
-    if (Number(bestCardBlack[0]) > Number(bestCardWhite[0])) {
-      const winningCard: Card = getFullCard(
-        Number(bestCardBlack[0]),
-        hands.Black
+
+  console.log("Black", bestCardsBlack, "\n", "White", bestCardsWhite);
+
+  const blackMax = Math.max(
+    ...bestCardsBlack.map((subArray) => Number(subArray[0]))
+  );
+  const whiteMax = Math.max(
+    ...bestCardsWhite.map((subArray) => Number(subArray[0]))
+  );
+  console.log("BlackMax: ", blackMax, "\n", "WhiteMax: ", whiteMax);
+  if (blackMax > whiteMax) {
+    // const winningCard: Card = getFullCard(blackMax, hands.Black);
+    return { winner: "Black", winningCard: blackMax };
+  } else if (blackMax < whiteMax) {
+    // const winningCard: Card = getFullCard(whiteMax, hands.White);
+    return { winner: "White", winningCard: whiteMax };
+  } else {
+    if (
+      blackMax === whiteMax &&
+      bestCardsBlack.length > 1 &&
+      bestCardsWhite.length > 1
+    ) {
+      const blackSecondVal = bestCardsBlack.filter(
+        (subArray) => Number(subArray[0]) !== blackMax
       );
-      return { winner: "Black", winningCard: winningCard };
-    } else if (Number(bestCardBlack[0]) < Number(bestCardWhite[0])) {
-      const winningCard: Card = getFullCard(
-        Number(bestCardWhite[0]),
-        hands.White
+      const whiteSecondVal = bestCardsWhite.filter(
+        (subArray) => Number(subArray[0]) !== whiteMax
       );
-      return { winner: "White", winningCard: winningCard };
+      console.log(
+        "Black2Max: ",
+        blackSecondVal,
+        "\n",
+        "White2Max: ",
+        whiteSecondVal
+      );
+      if (blackSecondVal[0][0] > whiteSecondVal[0][0]) {
+        // const winningCard: Card = getFullCard(blackSecondVal, hands.Black);
+        return { winner: "Black", winningCard: Number(blackSecondVal[0][0]) };
+      } else if (blackSecondVal[0][0] < whiteSecondVal[0][0]) {
+        // const winningCard: Card = getFullCard(whiteSecondVal, hands.White);
+        return { winner: "White", winningCard: Number(whiteSecondVal[0][0]) };
+      }
     } else {
       return { winner: "Tie" };
     }
-  } else {
-    return { winner: "Tie" };
   }
 }
