@@ -28,13 +28,13 @@ test("Check win by three of a kind", () => {
   expect(
     isThreeOfAKind(
       [
-        { "9": 1, "12": 4 },
+        { "9": 2, "12": 3 },
         { "2": 2, "4": 1, "8": 1, "13": 1 },
       ],
       {
         Black: [
           { cardValue: 9, cardKind: "H" },
-          { cardValue: 12, cardKind: "S" },
+          { cardValue: 9, cardKind: "S" },
           { cardValue: 12, cardKind: "D" },
           { cardValue: 12, cardKind: "H" },
           { cardValue: 12, cardKind: "C" },
@@ -53,7 +53,7 @@ test("Check win by three of a kind", () => {
     isThreeOfAKind(
       [
         { "9": 1, "12": 4 },
-        { "2": 1, "4": 4 },
+        { "2": 2, "4": 3 },
       ],
       {
         Black: [
@@ -65,36 +65,36 @@ test("Check win by three of a kind", () => {
         ],
         White: [
           { cardValue: 2, cardKind: "C" },
-          { cardValue: 4, cardKind: "H" },
+          { cardValue: 2, cardKind: "H" },
           { cardValue: 4, cardKind: "S" },
           { cardValue: 4, cardKind: "C" },
           { cardValue: 4, cardKind: "D" },
         ],
       }
     )
-  ).toEqual({ winner: "Black", winningCard: { cardValue: 12, cardKind: "S" } });
+  ).toEqual({ winner: "White" });
   expect(
     isThreeOfAKind(
       [
-        { "2": 1, "4": 4 },
-        { "9": 1, "12": 4 },
+        { "2": 2, "4": 3 },
+        { "9": 2, "12": 3 },
       ],
       {
         White: [
           { cardValue: 9, cardKind: "H" },
-          { cardValue: 12, cardKind: "S" },
+          { cardValue: 9, cardKind: "S" },
           { cardValue: 12, cardKind: "D" },
           { cardValue: 12, cardKind: "H" },
           { cardValue: 12, cardKind: "C" },
         ],
         Black: [
           { cardValue: 2, cardKind: "C" },
-          { cardValue: 4, cardKind: "H" },
+          { cardValue: 2, cardKind: "H" },
           { cardValue: 4, cardKind: "S" },
           { cardValue: 4, cardKind: "C" },
           { cardValue: 4, cardKind: "D" },
         ],
       }
     )
-  ).toEqual({ winner: "White", winningCard: { cardValue: 12, cardKind: "S" } });
+  ).toEqual({ winner: "White", winningCard: 12 });
 });
