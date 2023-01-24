@@ -15,10 +15,21 @@
  * @returns who the winner is and what their hand was
  */
 
+import cardOfMultiples from "./utils/card-of-multiples";
+// import getFullCard from "./utils/get-full-card";
+import highestCardInHands from "./utils/highest-card-in-hands";
+import isFlush from "./utils/is-flush";
+import isFourOfAKind from "./utils/is-four-of-a-kind";
+import isOnePair from "./utils/is-one-pair";
+import isStraightFlush from "./utils/is-straight-flush";
+import isStraight from "./utils/is-straight";
+import isThreeOfAKind from "./utils/is-three-of-a-kind";
+import isTwoPairs from "./utils/is-two-pairs";
+import numOfSame from "./utils/num-of-same";
+import numPairs from "./utils/num-pairs";
+
 //=====================TYPES=============================================
 export type CardKind = "C" | "D" | "S" | "H";
-// todo: all suites are of the same strength in poker, can remove
-const kindValue = { C: 0.1, D: 0.2, S: 0.3, H: 0.4 };
 export type CardValue = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
 export interface Card {
@@ -71,159 +82,13 @@ export type ReturnType =
 //------------------------------------------------checks number of pairs in hands
 
 //------------------------------------------------checks if cards are a full house
-function isFullHouse(
-  hands: InputCards
-): "Black" | "White" | 0 | ["White" | "Black" | "Both", Card] {
-  const handObjs = numOfSame(hands);
-  if (handObjs === 0) {
-    return 0;
-  } else {
-    const threeResult = isThreeOfAKind(handObjs, hands);
-    const numPairsResult = numPairs(handObjs);
-    if (threeResult === "Black" && numPairsResult === "Both1") {
-      return "Black";
-    } else if (threeResult === "White" && numPairsResult === "Both1") {
-      return "White";
-    } else if (threeResult === "Black" && numPairsResult === "Black1") {
-      return "Black";
-    } else if (threeResult === "White" && numPairsResult === "White1") {
-      return "White";
-    } else if (Array.isArray(threeResult)) {
-      const winner: ["White" | "Black" | "Both", Card] = cardOfMultiples(
-        handObjs,
-        hands,
-        3
-      );
-      return winner;
-    } else {
-      return 0;
-    }
-  }
-}
 
 //------------------------------------------------checks if cards are in a row
-function isStraight(
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  let handOfCardsBlack: number[] = [];
-  let handOfCardsWhite: number[] = [];
-  const blackHand = hands.Black;
-  const whiteHand = hands.White;
-  const result: ("White" | "Black")[] = [];
-
-  for (let card of blackHand) {
-    handOfCardsBlack.push(card.cardValue);
-  }
-  let sortedHand = handOfCardsBlack.sort();
-  let previousCard = sortedHand[0];
-  for (let i = 1; i < sortedHand.length; i++) {
-    if (previousCard + 1 === sortedHand[i]) {
-      previousCard = sortedHand[i];
-      result.push("Black");
-      break;
-    }
-  }
-  for (let card of whiteHand) {
-    handOfCardsWhite.push(card.cardValue);
-  }
-  sortedHand = handOfCardsWhite.sort();
-  previousCard = sortedHand[0];
-  for (let i = 1; i < sortedHand.length; i++) {
-    if (previousCard + 1 === sortedHand[i]) {
-      previousCard = sortedHand[i];
-      result.push("White");
-      break;
-    }
-  }
-
-  if (result.length === 2) {
-    return 0;
-  } else if (result.length === 1) {
-    return result[0];
-  } else {
-    const winner = highestCardInHands(hands);
-    return winner;
-  }
-}
 
 //------------------------------------------------checks if cards are one suite
-function isFlush(
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  let handOfCardsBlack: number = 0;
-  let handOfCardsWhite: number = 0;
-
-  const blackHand = hands.Black;
-  const whiteHand = hands.White;
-
-  const suiteValue = { C: 0.1, D: 1, S: 4, H: 16 };
-  const trueCases: number[] = [0.5, 5, 20, 80];
-
-  for (let card of blackHand) {
-    handOfCardsBlack += suiteValue[card.cardKind];
-  }
-  for (let card of whiteHand) {
-    handOfCardsWhite += suiteValue[card.cardKind];
-  }
-  if (
-    trueCases.includes(handOfCardsBlack) &&
-    trueCases.includes(handOfCardsWhite)
-  ) {
-    const winner = highestCardInHands(hands);
-    return winner;
-  } else if (
-    trueCases.includes(handOfCardsBlack) &&
-    !trueCases.includes(handOfCardsWhite)
-  ) {
-    return "Black";
-  } else if (
-    !trueCases.includes(handOfCardsBlack) &&
-    trueCases.includes(handOfCardsWhite)
-  ) {
-    return "White";
-  } else {
-    return 0;
-  }
-}
 
 //------------------------------------------------checks if cards are straight flush
-function isStraightFlush(
-  hands: InputCards
-): "White" | "Black" | 0 | ["White" | "Black" | "Both", Card] {
-  const straightResult = isStraight(hands);
-  const flushResult = isFlush(hands);
 
-  if (straightResult === "Black" && flushResult === "Black") {
-    return "Black";
-  } else if (straightResult === "White" && flushResult === "White") {
-    return "White";
-  } else if (Array.isArray(straightResult)) {
-    if (straightResult[0] === "Both" && flushResult === "White") {
-      return "White";
-    } else if (straightResult[0] === "Both" && flushResult === "Black") {
-      return "Black";
-    } else if (Array.isArray(flushResult)) {
-      if (straightResult[0] === "Both" && flushResult[0] === "Both") {
-        const winner = highestCardInHands(hands);
-        return winner;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
-    }
-  } else if (Array.isArray(flushResult)) {
-    if (straightResult === "White" && flushResult[0] === "Both") {
-      return "White";
-    } else if (straightResult === "Black" && flushResult[0] === "Both") {
-      return "Black";
-    } else {
-      return 0;
-    }
-  } else {
-    return 0;
-  }
-}
 //------------------------------------------------checks if cards are royal flush
 // todo^^^^^ (check if there's an ACE in winning hand)
 
