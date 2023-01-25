@@ -28,10 +28,11 @@ import isThreeOfAKind from "./utils/is-three-of-a-kind";
 import isTwoPairs from "./utils/is-two-pairs";
 import numOfSame from "./utils/num-of-same";
 import isFullHouse from "./utils/is-full-house";
+import isRoyalFlush from "./utils/is-royal-flush";
 // import numPairs from "./utils/num-pairs";
 //------------------------------------------------checks if cards are royal flush
 // todo^^^^^ (check if there's an ACE in winning hand)
-
+// todo: "TIE" for PAIR, TWO PAIRS, HIGHCARD
 //=====================TYPES=============================================
 export type CardKind = "C" | "D" | "S" | "H";
 export type CardValue = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
@@ -71,12 +72,20 @@ export type ReturnType =
 
 //------------------------------------------------game result function
 function gameResult(inputCards: InputCards): ReturnType {
-  // royal flush
-  // straight flush
+  // royal flush ----> straight flush
   const straightFlushResult = isStraightFlush(inputCards);
-  console.log(77, straightFlushResult);
   if (straightFlushResult) {
-    console.log(79, straightFlushResult);
+    const royalFlushResultBlack = isRoyalFlush(inputCards.Black);
+    const royalFlushResultWhite = isRoyalFlush(inputCards.White);
+    if (royalFlushResultBlack && royalFlushResultWhite) {
+      return {
+        winner: "Tie",
+      };
+    } else if (royalFlushResultBlack) {
+      return { winner: "Black", winningType: "royal flush" };
+    } else if (royalFlushResultWhite) {
+      return { winner: "White", winningType: "royal flush" };
+    }
     if (straightFlushResult.winner !== "Tie") {
       return {
         winner: straightFlushResult.winner,
@@ -91,13 +100,11 @@ function gameResult(inputCards: InputCards): ReturnType {
 
   // four of a kind ----> full house
   if (numOfSameObjs) {
-    console.log(94);
     const fourOfAKindResult = isFourOfAKind(numOfSameObjs, inputCards);
     const fullHouseResult = isFullHouse(inputCards);
     // four of a kind
     if (fourOfAKindResult) {
       if (fourOfAKindResult) {
-        console.log(100, fourOfAKindResult);
         if (fourOfAKindResult.winner !== "Tie") {
           return {
             winner: fourOfAKindResult.winner,
@@ -109,7 +116,6 @@ function gameResult(inputCards: InputCards): ReturnType {
       }
     } /* full house */ else if (fullHouseResult) {
       if (fullHouseResult) {
-        console.log(112, fullHouseResult);
         if (fullHouseResult.winner !== "Tie") {
           return {
             winner: fullHouseResult.winner,
@@ -125,7 +131,6 @@ function gameResult(inputCards: InputCards): ReturnType {
   // flush
   const flushResult = isFlush(inputCards);
   if (flushResult) {
-    console.log(128, flushResult);
     if (flushResult.winner !== "Tie") {
       return {
         winner: flushResult.winner,
@@ -139,7 +144,6 @@ function gameResult(inputCards: InputCards): ReturnType {
   // straight
   const straightResult = isStraight(inputCards);
   if (straightResult) {
-    console.log(142, straightResult);
     if (straightResult.winner !== "Tie") {
       return {
         winner: straightResult.winner,
@@ -152,13 +156,11 @@ function gameResult(inputCards: InputCards): ReturnType {
 
   // three of a kind ---> two pairs ---> one pair
   if (numOfSameObjs) {
-    console.log(155);
     const threeOfAKindResult = isThreeOfAKind(numOfSameObjs, inputCards);
     const twoPairsResult = isTwoPairs(numOfSameObjs, inputCards);
     const onePairResult = isOnePair(numOfSameObjs, inputCards);
     // three of a kind
     if (threeOfAKindResult) {
-      console.log(161, threeOfAKindResult);
       if (threeOfAKindResult.winner !== "Tie") {
         return {
           winner: threeOfAKindResult.winner,
@@ -168,7 +170,6 @@ function gameResult(inputCards: InputCards): ReturnType {
         return threeOfAKindResult;
       }
     } /* two pairs */ else if (twoPairsResult) {
-      console.log(171, twoPairsResult);
       if (twoPairsResult.winner !== "Tie") {
         return {
           winner: twoPairsResult.winner,
@@ -178,7 +179,6 @@ function gameResult(inputCards: InputCards): ReturnType {
         return twoPairsResult;
       }
     } /* one pairs */ else if (onePairResult) {
-      console.log(181, onePairResult);
       if (onePairResult.winner !== "Tie") {
         return {
           winner: onePairResult.winner,

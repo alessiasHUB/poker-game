@@ -1,5 +1,4 @@
-import { InputCards, ReturnType, Card } from "../score-calc";
-import getFullCard from "./get-full-card";
+import { InputCards, ReturnType } from "../score-calc";
 
 //------------------------------------------------return value of card from multiples
 export default function cardOfMultiples(
@@ -47,6 +46,8 @@ export default function cardOfMultiples(
         return { winner: "Black", winningCard: Number(blackSecondVal[0][0]) };
       } else if (blackSecondVal[0][0] < whiteSecondVal[0][0]) {
         return { winner: "White", winningCard: Number(whiteSecondVal[0][0]) };
+      } else {
+        return { winner: "Tie" };
       }
     } else {
       return { winner: "Tie" };
